@@ -1,68 +1,62 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Gazer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header><h1>Galaxy Gazer</h1></header>
-
-    <div id="controls">
-        <input type="date" id="date-input">
-        <button id="search-btn">Explore</button>
-        <div id="controls">
-    <input type="text" id="search-input" placeholder="Search the stars (e.g., Mars, Nebula)...">
-    </div>
-    </div>
-
-    <div id="loading-message" >
-        <p>"Fetching Data..."</p>
-    </div>
-
-    <main id="gallery-container"></main>
-
-    <script src="script.js"></script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Gazer | NASA Mission Explorer</title>
+    <title>GalaxyGazer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <header>
-        <h1>Galaxy Gazer</h1>
-        
-        <div id="controls">
-            <div class="control-group">
-                <label for="search-input">Search the Cosmos:</label>
-                <input type="text" id="search-input" placeholder="e.g. Nebula, Mars, Galaxy...">
-            </div>
-
-            <div class="control-group">
-                <label for="date-input">Time Machine (Pick a Date):</label>
-                <input type="date" id="date-input">
+    <nav>
+        <div class="logo">GalaxyGazer</div>
+    </nav>
+    <main class="split-layout">
+        <div class="left-panel">
+            <div class="glass-card form-card">
+                <div class="form-header">
+                    <h3>See the universe on the day you were born !</h3>
+                    <p>Select your birth date to see your star.</p>
+                </div>
+                <div class="inputs-row">
+                    <div class="input-group">
+                        <label>MONTH</label>
+                        <select id="month-select">
+                            <option value="" disabled selected>Select</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>DAY</label>
+                        <select id="day-select">
+                            <option value="" disabled selected>Day</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>YEAR</label>
+                        <select id="year-select">
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="fetch-btn">See Space Photo</button>
             </div>
         </div>
-    </header>
 
-    <main>
-        <div id="loading-message">
-            <div class="spinner"></div> <p>Initializing Warp Drive...</p>
+        <div class="right-panel">
+            <div class="glass-card gallery-container">
+                <div id="gallery-grid" class="minimal-grid"></div>
+            </div>
         </div>
-
-        <section id="gallery-container"></section>
     </main>
 
-    <footer>
-        <p>Data provided by NASA API | Explore the Universe</p>
-    </footer>
+    <div id="detail-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <button id="close-modal">&times;</button>
+            <img id="modal-img" src="" alt="">
+            <h2 id="modal-title"></h2>
+            <p id="modal-date" class="highlight-date"></p>
+            <p id="modal-desc"></p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

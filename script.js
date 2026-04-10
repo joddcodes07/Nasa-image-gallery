@@ -1,114 +1,114 @@
-const apiKey = 'HNVeCZmgoEnD4nlUQdX72iiRTQXQVrf3EtU2A7tw';
-const galleryContainer = document.getElementById('gallery-container');
-const loader = document.getElementById('loading-message');
-const searchInput = document.getElementById('search-input');
-const dateInput = document.getElementById('date-input');
+let apiKey = 'HNVeCZmgoEnD4nlUQdX72iiRTQXQVrf3EtU2A7tw'
+let monthSelect = document.getElementById('month-select')
+let daySelect = document.getElementById('day-select')
+let yearSelect = document.getElementById('year-select')
+let fetchBtn = document.getElementById('fetch-btn')
+let galleryGrid = document.getElementById('gallery-grid')
+let modal = document.getElementById('detail-modal')
+let closeModal = document.getElementById('close-modal')
+let modalImg = document.getElementById('modal-img')
+let modalTitle = document.getElementById('modal-title')
+let modalDate = document.getElementById('modal-date')
+let modalDesc = document.getElementById('modal-desc')
 
-let allSpaceData = [];
+let months = [
+    {val:'01', name:'January'}, {val:'02', name:'February'}, {val:'03', name:'March'},
+    {val:'04', name:'April'}, {val:'05', name:'May'}, {val:'06', name:'June'},
+    {val:'07', name:'July'}, {val:'08', name:'August'}, {val:'09', name:'September'},
+    {val:'10', name:'October'}, {val:'11', name:'November'}, {val:'12', name:'December'}
+]
 
-async function getInitialGallery() {
-    showLoader(true);
-    try {
-        const response = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=15`);
-        if (!response.ok) throw new Error("Network response was not ok");
-        
-        const data = await response.json();
-        allSpaceData = data; 
-        renderGallery(allSpaceData);
-    } catch (error) {
-        handleError("Failed to fetch the cosmos. Check your connection.");
-    } finally {
-        showLoader(false);
+months.forEach((m)=>{
+    let opt = document.createElement('option')
+    opt.value = m.val
+    opt.innerText = m.name
+    monthSelect.appendChild(opt)
+})
+
+for(let i=1; i<=31; i++){
+    let d = i < 10 ? `0${i}` : `${i}`
+    let opt = document.createElement('option')
+    opt.value = d
+    opt.innerText = d
+    daySelect.appendChild(opt)
+}
+
+for(let x=2026; x>=1995; x--){
+    let opt = document.createElement('option')
+    opt.value = x
+    opt.innerText = x
+    yearSelect.appendChild(opt)
+}
+
+async function getInitialGrid() {
+    try{
+        let res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=6`)
+        let data = await res.json()
+        renderGrid(data)
+    }
+    catch(error){
+        return error
     }
 }
+
 async function getSpaceByDate(selectedDate) {
-    showLoader(true);
-    try {
-        const response = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&date=${selectedDate}`);
-        if (!response.ok) throw new Error("Invalid date or API error");
-        
-        const data = await response.json();
-        renderGallery([data]);
-    } catch (error) {
-        handleError("Could not find data for that specific date.");
-    } finally {
-        showLoader(false);
+    try{
+        let res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&date=${selectedDate}`)
+        let data = await res.json()
+        renderGrid([data])
+    }
+    catch(error){
+        return error
     }
 }
-function renderGallery(dataArray) {
-    galleryContainer.innerHTML = ''; 
-    
-    if (dataArray.length === 0) {
-        galleryContainer.innerHTML = '<p class="no-results">No celestial matches found.</p>';
-        return;
-    }
 
-    dataArray.forEach(item => {
-        if (item.media_type === 'image') {
-            const cardHtml = `
-                <div class="card">
-                    <img src="${item.url}" alt="${item.title}" loading="lazy">
-                    <div class="card-info">
-                        <h3>${item.title}</h3>
-                        <p class="date">${item.date}</p>
-                    </div>
+function renderGrid(dataArray) {
+    galleryGrid.innerHTML = ''
+    dataArray.forEach((n)=>{
+        if(n.media_type==='image'){
+            let wrapper = document.createElement('div')
+            wrapper.className = 'grid-item'
+            
+            let html = `
+                <img src="${n.url}" alt="${n.title}">
+                <div class="item-overlay">
+                    <h4>${n.title}</h4>
+                    <button class="read-btn">Read More</button>
                 </div>
-            `;
-            galleryContainer.innerHTML += cardHtml;
+            `
+            wrapper.innerHTML = html
+            
+            let btn = wrapper.querySelector('.read-btn')
+            btn.addEventListener('click', ()=>{
+                openModal(n)
+            })
+            
+            galleryGrid.appendChild(wrapper)
         }
-    });
-}
-function showLoader(isLoading) {
-    loader.style.display = isLoading ? 'block' : 'none';
+    })
 }
 
-function handleError(message) {
-    galleryContainer.innerHTML = `<p class="error-msg">${message}</p>`;
+function openModal(dataObj) {
+    modalImg.src = dataObj.url
+    modalTitle.innerText = dataObj.title
+    modalDate.innerText = dataObj.date
+    modalDesc.innerText = dataObj.explanation
+    modal.classList.remove('hidden')
 }
-searchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
+
+closeModal.addEventListener('click', ()=>{
+    modal.classList.add('hidden')
+})
+
+fetchBtn.addEventListener('click', ()=>{
+    let m = monthSelect.value
+    let d = daySelect.value
+    let y = yearSelect.value
     
-    const filteredResults = allSpaceData.filter(item => {
-        return item.title.toLowerCase().includes(term);
-    });
-    
-    renderGallery(filteredResults);
-});
-dateInput.addEventListener('change', (e) => {
-    if (e.target.value) {
-        getSpaceByDate(e.target.value);
+    if(m && d && y){
+        let dateStr = `${y}-${m}-${d}`
+        getSpaceByDate(dateStr)
     }
-});
+})
 
-getInitialGallery();
-
-
-
-
-
-// async function getSpaceData() {
-//     loader.style.display = 'block';
-//     try {
-//         const response = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=15`);
-//         const data = await response.json();
-
-//         renderGallery(data);
-//     }catch (error) {
-//         console.error("fetch failed:", error);
-//     }finally {
-//         loader.style.display = 'none';
-//     }
-// }
-// function renderGallery(dataArray) {
-//     dataArray.forEach(item => {
-//         const cardHtml = `
-//             <div class="card">
-//                 <img src="${item.url}" alt="${item.title}">
-//                 <h3>${item.title}</h3>
-//                 <p>${item.date}</p>
-//             </div>
-//         `;
-//         gallery.innerHTML += cardHtml;
-//     });
-// }
-// getSpaceData();
+getInitialGrid()
