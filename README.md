@@ -9,11 +9,8 @@ Galaxy Gazer is an interactive web application built to demonstrate core front-e
 
 
 ## Planned Features
-* **Date Explorer:** Users can select a specific date to view the APOD for that day.
-* **Cosmic Gallery:** Fetches a collection of historical APOD data to browse.
-* **Search Functionality:** Users can search the loaded gallery by title or description keywords (will utilize JS array filtering).
-* **Media Filtering:** Users can filter the gallery to view only images or only videos (will utilize JS array filtering).
-* **Chronological Sorting:** Users can sort the gallery by date, from newest to oldest or vice versa (will utilize JS array sorting).
+* **Date Explorer:** Users can select a specific date to fetch the APOD for that day.
+* **Cosmic Gallery:** Fetches a collection of historical APOD data to browse, with add to favourites functionality and users can read about the image by clicking on "Read More" button.
 
 ## Technologies Used
 * **HTML5:** For the structural foundation.
